@@ -2,13 +2,20 @@ package main
 
 import (
 	"abdulmajid/fileserver/cmd/server/demo"
-	"time"
+	rpcserver "abdulmajid/fileserver/cmd/server/rpc_server"
+	"log"
 )
 
 func main() {
-	go demo.RpcServer()
+	// go demo.RpcServer()
+	var addr string = "localhost:1234"
+	server, err := rpcserver.NewRPCServer(addr)
 
-	time.Sleep(5 * time.Second)
+	if err != nil {
+		log.Fatalf("Failed to create RPC server: %v", err)
+	}
 
-	demo.RpcClient()
+	server.RegisterService(new(demo.Arith))
+
+	server.Start()
 }
