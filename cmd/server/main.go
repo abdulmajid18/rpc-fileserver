@@ -1,8 +1,8 @@
 package main
 
 import (
-	"abdulmajid/fileserver/cmd/server/fileservice"
 	rpcserver "abdulmajid/fileserver/cmd/server/rpc_server"
+	"abdulmajid/fileserver/internal/fileservice"
 	"log"
 )
 

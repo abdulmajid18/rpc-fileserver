@@ -1,24 +1,23 @@
 package fileservice
 
 import (
-	"abdulmajid/fileserver/cmd/server/request"
-	"abdulmajid/fileserver/cmd/server/response"
+	"abdulmajid/fileserver/internal/types"
 	"os"
 	"time"
 )
 
 type FileService interface {
-	CreateDir(req request.DirRequest, res *response.GenericResponse) error
-	CreateFile(req request.FileRequest, res *response.GenericResponse) error
-	ReadFile(req request.FileRequest, res *response.FileResponse) error
-	WriteFile(req request.FileRequest, res *response.GenericResponse) error
-	AppendFile(req request.FileRequest, res *response.GenericResponse) error
-	GetFileInfo(req request.FileRequest, res *response.FileMetadataResponse) error
+	CreateDir(req types.DirRequest, res *types.GenericResponse) error
+	CreateFile(req types.FileRequest, res *types.GenericResponse) error
+	ReadFile(req types.FileRequest, res *types.FileResponse) error
+	WriteFile(req types.FileRequest, res *types.GenericResponse) error
+	AppendFile(req types.FileRequest, res *types.GenericResponse) error
+	GetFileInfo(req types.FileRequest, res *types.FileMetadataResponse) error
 }
 
 type FileOperations struct{}
 
-func (f *FileOperations) CreateDir(req request.DirRequest, res *response.GenericResponse) error {
+func (f *FileOperations) CreateDir(req types.DirRequest, res *types.GenericResponse) error {
 	err := os.MkdirAll(req.Name, os.ModePerm)
 	if err != nil {
 		res.Success = false
@@ -30,7 +29,7 @@ func (f *FileOperations) CreateDir(req request.DirRequest, res *response.Generic
 	return nil
 }
 
-func (f *FileOperations) CreateFile(req request.FileRequest, res *response.GenericResponse) error {
+func (f *FileOperations) CreateFile(req types.FileRequest, res *types.GenericResponse) error {
 	file, err := os.Create(req.Filename)
 	if err != nil {
 		res.Success = false
@@ -44,7 +43,7 @@ func (f *FileOperations) CreateFile(req request.FileRequest, res *response.Gener
 	return nil
 }
 
-func (f *FileOperations) ReadFile(req request.FileRequest, res *response.FileResponse) error {
+func (f *FileOperations) ReadFile(req types.FileRequest, res *types.FileResponse) error {
 	data, err := os.ReadFile(req.Filename)
 	if err != nil {
 		res.Success = false
@@ -57,7 +56,7 @@ func (f *FileOperations) ReadFile(req request.FileRequest, res *response.FileRes
 	return nil
 }
 
-func (f *FileOperations) WriteFile(req request.FileRequest, res *response.GenericResponse) error {
+func (f *FileOperations) WriteFile(req types.FileRequest, res *types.GenericResponse) error {
 	err := os.WriteFile(req.Filename, req.Contents, 0644)
 	if err != nil {
 		res.Success = false
@@ -69,7 +68,7 @@ func (f *FileOperations) WriteFile(req request.FileRequest, res *response.Generi
 	return nil
 }
 
-func (f *FileOperations) AppendFile(req request.FileRequest, res *response.GenericResponse) error {
+func (f *FileOperations) AppendFile(req types.FileRequest, res *types.GenericResponse) error {
 	file, err := os.OpenFile(req.Filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		res.Success = false
@@ -90,7 +89,7 @@ func (f *FileOperations) AppendFile(req request.FileRequest, res *response.Gener
 	return nil
 }
 
-func (f *FileOperations) GetFileInfo(req request.FileRequest, res *response.FileMetadataResponse) error {
+func (f *FileOperations) GetFileInfo(req types.FileRequest, res *types.FileMetadataResponse) error {
 	info, err := os.Stat(req.Filename)
 	if err != nil {
 		res.Success = false

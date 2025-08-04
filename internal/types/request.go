@@ -1,4 +1,4 @@
-package request
+package types
 
 type FileRequest struct {
 	Filename string
@@ -7,8 +7,4 @@ type FileRequest struct {
 
 type DirRequest struct {
 	Name string
-}
-
-type FileResponse struct {
-	Contents []byte
 }

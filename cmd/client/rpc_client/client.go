@@ -1,8 +1,7 @@
 package rpcclient
 
 import (
-	"abdulmajid/fileserver/cmd/client/request"
-	"abdulmajid/fileserver/cmd/client/response"
+	"abdulmajid/fileserver/internal/types"
 	"fmt"
 	"log"
 	"net"
@@ -18,8 +17,8 @@ func RpcClient() {
 
 	client := rpc.NewClient(conn)
 
-	args := &request.DirRequest{Name: "new_dirr"}
-	var reply response.GenericResponse
+	args := &types.DirRequest{Name: "new_dirr"}
+	var reply types.GenericResponse
 
 	err = client.Call("FileOperations.CreateDir", args, &reply)
 	if err != nil {
