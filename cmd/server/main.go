@@ -2,6 +2,7 @@ package main
 
 import (
 	"abdulmajid/fileserver/cmd/server/demo"
+	"abdulmajid/fileserver/cmd/server/fileservice"
 	rpcserver "abdulmajid/fileserver/cmd/server/rpc_server"
 	"log"
 )
@@ -16,6 +17,7 @@ func main() {
 	}
 
 	server.RegisterService(new(demo.Arith))
+	server.RegisterService(new(fileservice.FileOperations))
 
 	server.Start()
 }
