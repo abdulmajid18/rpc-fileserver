@@ -1,7 +1,6 @@
 package main
 
 import (
-	"abdulmajid/fileserver/cmd/server/demo"
 	"abdulmajid/fileserver/cmd/server/fileservice"
 	rpcserver "abdulmajid/fileserver/cmd/server/rpc_server"
 	"log"
@@ -16,7 +15,6 @@ func main() {
 		log.Fatalf("Failed to create RPC server: %v", err)
 	}
 
-	server.RegisterService(new(demo.Arith))
 	server.RegisterService(new(fileservice.FileOperations))
 
 	server.Start()
