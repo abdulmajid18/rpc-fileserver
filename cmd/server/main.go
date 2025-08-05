@@ -4,11 +4,16 @@ import (
 	rpcserver "abdulmajid/fileserver/cmd/server/rpc_server"
 	"abdulmajid/fileserver/internal/fileservice"
 	"log"
+	"os"
 )
 
 func main() {
 	// go demo.RpcServer()
-	var addr string = "localhost:1234"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "1234"
+	}
+	addr := ":" + port
 	server, err := rpcserver.NewRPCServer(addr)
 
 	if err != nil {

@@ -1,33 +1,22 @@
 package rpcclient
 
 import (
-	"abdulmajid/fileserver/internal/types"
 	"fmt"
-	"log"
 	"net"
 	"net/rpc"
 )
 
-func RpcClient() {
-	conn, err := net.Dial("tcp", "localhost:1234")
+func Call(method string, address string, args any, reply any) error {
+	conn, err := net.Dial("tcp", address)
 	if err != nil {
-		log.Fatal("Dialing RPC server failed:", err)
+		return fmt.Errorf("failed to dial RPC server: %w", err)
 	}
 	defer conn.Close()
-
 	client := rpc.NewClient(conn)
-
-	args := &types.DirRequest{Name: "new_dirr"}
-	var reply types.GenericResponse
-
-	err = client.Call("FileOperations.CreateDir", args, &reply)
+	newMethod := fmt.Sprintf("%s%s", "FileOperations.", method)
+	err = client.Call(newMethod, args, reply)
 	if err != nil {
-		log.Fatal("RPC call failed:", err)
+		return fmt.Errorf("RPC call failed: %w", err)
 	}
-
-	if reply.Success {
-		fmt.Println("✅ Success:", reply.Message)
-	} else {
-		fmt.Println("❌ Failed:", reply.Message)
-	}
+	return nil
 }
