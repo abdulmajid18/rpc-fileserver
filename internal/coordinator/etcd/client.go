@@ -15,8 +15,7 @@ type EtcdClient struct {
 }
 
 func (etcdClient *EtcdClient) InitClient() error {
-	ectcdEndpoint := os.Getenv("ETCD_ENDPOINTS")
-	endpoints := []string{"http://etcd1:2379", "http://etcd2:2379", "http://localhost:2379", "http://0.0.0.0:2379", ectcdEndpoint}
+	endpoints := []string{"http://etcd1:2379", "http://etcd2:2379", "http://localhost:2379", "http://0.0.0.0:2379"}
 
 	cfg := clientv3.Config{
 		Endpoints:   endpoints,
@@ -32,7 +31,7 @@ func (etcdClient *EtcdClient) InitClient() error {
 	return nil
 }
 
-func (etcdClient EtcdClient) RegisterService(instanceID, addr string) error {
+func (etcdClient *EtcdClient) RegisterService(instanceID, addr string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -56,7 +55,8 @@ func (etcdClient EtcdClient) RegisterService(instanceID, addr string) error {
 
 	// Keep lease alive in background
 	go func() {
-		keepAlive, err := etcdClient.Client.KeepAlive(ctx, lease.ID)
+		kctx := context.Background()
+		keepAlive, err := etcdClient.Client.KeepAlive(kctx, lease.ID)
 		if err != nil {
 			log.Printf("Failed to start keepalive: %v", err)
 			return
@@ -70,7 +70,8 @@ func (etcdClient EtcdClient) RegisterService(instanceID, addr string) error {
 					return
 				}
 				log.Printf("Lease renewed: ID=%d TTL=%d", ka.ID, ka.TTL)
-			case <-ctx.Done():
+			case <-kctx.Done():
+				log.Println("Keepalive context done")
 				return
 			}
 		}
@@ -85,7 +86,7 @@ func (etcdClient *EtcdClient) Close() {
 	}
 }
 
-func (etcdClient EtcdClient) ListServers() (map[string]string, error) {
+func (etcdClient *EtcdClient) ListServers() (map[string]string, error) {
 	resp, err := etcdClient.Client.Get(context.Background(), "/services/rpc_servers/", clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
